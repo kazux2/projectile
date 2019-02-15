@@ -2,22 +2,22 @@
   <div id="app" class="container">
     <div class="row">
       <div class="col-6">
-        <img :src="hero-image" class="img-fluid rounded" id="hero-image" alt="Responsive image">
+        <img :src="p.heroImage" class="img-fluid rounded" id="hero-image" alt="Responsive image">
       </div>
       <div class="col">
         <div id="project-attributes">
-          <h1>{{ projectName }}</h1>
+          <h1><editable v-bind:value="p.name.value" /></h1>
           <div id="member">
             <h2>Member</h2>
             <ul>
-              <li v-for="member in members" :key="member">{{ member }}</li>
+              <li v-for="member in p.members" :key="member">{{ member }}</li>
             </ul>
           </div>
           <div id="resources">
             <h2>Resources</h2>
             <ul>
-              <li v-for="(resourceURL, resourceName) in resources" :key="resourceName">
-                <a href="resources">{{ resourceName }}</a>
+              <li v-for="(value, key, index) in p.resources" :key="index">
+                <a :href="value">{{ key }}</a>
               </li>
             </ul>
           </div>
@@ -26,26 +26,27 @@
     </div>
     <div id="project-summery">
       <h1>プロジェクト概要</h1>
-      <p>{{ projectDescription }}</p>
+      <p>{{ p.overview }}</p>
     </div>
-    <!-- <div class="event" v-for="event in events" :key="event">
+    <div class="event" v-for="event in p.events" :key="event">
             <h1>{{ event.date }}</h1>
                 <p>{{ event.content }}</p>
-    </div>-->
+    </div>
   </div>
 </template>
 
 <script>
 import firebase from "firebase";
+let projects = require( "../assets/projects.json" ).projects;
+import Editable from './Editable.vue';
+
 export default {
+  components: {
+    'editable': Editable
+  } ,
   data() {
     return {
-      user: "",
-      projectName: "",
-      members: [],
-      resources:[],
-      projectDescription: "",
-      events: []
+      p: projects[this.$route.params.id]
     };
   },
   created() {
