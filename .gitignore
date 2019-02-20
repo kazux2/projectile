@@ -12,5 +12,4 @@ yarn-error.log
 *.sln
 
 # credentials
-src/helpers/firebaseConfig.js
 credentials/
