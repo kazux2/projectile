@@ -33,24 +33,6 @@ export default {
       querySnapshot: ""
     };
   },
-  created() {
-    let vm = this;
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        vm.isLoggedIn = true;
-        vm.displayName = user.displayName;
-        vm.email = user.email;
-        vm.uid = user.uid;
-      }
-      db.collection("projectsTable")
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            vm.$set(vm.projects, doc.id, doc.data());
-          });
-        });
-    });
-  },
   methods: {
     createProject() {
       const projectRef = db.collection("projects");

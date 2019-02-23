@@ -18,32 +18,14 @@ export default {
         firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
     },
     logIn() {
-        // const provider = new firebase.auth.GoogleAuthProvider();
-        // firebase.auth().signInWithPopup(provider);
         this.$router.push('/auth')
     },
     logOut() {
         firebase.auth().signOut();
     },
-    // onAuth() {
-    //     firebase.auth().onAuthStateChanged(user => {
-    //         this.db.collection("users")
-    //             .doc(user.uid)
-    //             .onSnapshot(doc => {
-    //                 store.storeUser(doc.data())
-    //             })
-    //         this.db.collection("projectsTable")
-    //             .get().then(docs => {
-    //                 var projects = [];
-    //                 docs.forEach(doc => {
-    //                     projects.push(doc.data());
-    //                 });
-    //                 store.storeProjects(projects)
-    //             })
-    //     });
-    // },
     onAuth() {
       firebase.auth().onAuthStateChanged(user => {
+        store.commit('storeUserId', user.uid);
         this.db.collection("users")
         .doc(user.uid)
         .get().then(doc => {
@@ -59,5 +41,12 @@ export default {
             store.commit("syncProjects", projects)
         })
       });
+    },
+    setUserName(userId, newValue) {
+        console.log("setUserName")
+      return this.db.collection("users").doc(userId)
+      .update({
+        profileName: newValue
+      })
     }
 };
