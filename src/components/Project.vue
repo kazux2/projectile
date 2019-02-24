@@ -43,11 +43,9 @@
 
 <script>
 import firebase from "../firebase";
-let db = firebase.db;
-let projects = require( "../assets/projects.json" ).projects;
 import Editable from './Editable.vue';
-
 import { mapState, mapActions } from 'vuex';
+
 export default {
   components: {
     'editable': Editable
@@ -63,46 +61,11 @@ export default {
   },
   created() {
     this.fetchProject(this.$route.params.id)
-    // let vm = this;
-    // console.log(vm.d)
-    // db.collection("projects").doc(this.$route.params.id)
-    // .onSnapshot(doc => {
-    //   vm.d = doc.data()
-    //   this.name = vm.d.name
-    //   console.log(vm.d)
-    // })
-
-
-    // let firebaseDatabase = firebase.database();
-    // firebase
-    //   .database()
-    //   .ref("project")
-    //   .once("value")
-    //   .then(function(snapshot) {
-    //     let data = snapshot.val();
-    //     if (data) {
-    //       vm.projectName = data.name;
-    //       vm.projectDescription = data.description;
-    //     }
-    //   });
   },
   computed: mapState(['project']),
   methods: {
-    storeProjects() {
-      // ↓ メッセージを Realtime Database に登録する処理
-      firebase
-        .database()
-        .ref("project")
-        .set({ name: this.projectName, description: this.projectDescription });
-    },
-    logOut() {
-      firebase.auth().signOut();
-    },
-    showStuff() {
-      console.log(this.name)
-    },
     addEvent(){
-      db.collection("projects").doc(this.$route.params.id)
+      firebase.db.collection("projects").doc(this.$route.params.id)
       .update({
         events: firebase.firestore.FieldValue.arrayUnion({content:this.newEventContent, date:this.newEventDate})
       })
