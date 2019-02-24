@@ -70,6 +70,7 @@ export default {
         return profileRef.getDownloadURL()
     },
     uploadProjectImage(file){
+        console.log("uploading file: ", file)
         var profileRef = this.storageRef.child(`${store.state.userId}/project/heroImage.png`); //拡張子対応
         profileRef.put(file)
         return profileRef.getDownloadURL()

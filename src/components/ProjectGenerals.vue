@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div>selectedImageRaw from projectGeneral:{{selectedImageRaw}}
     <div class="container">
       <div class="row">
         <div class="col-6">
-          <img :src="project.heroImage" class="img-fluid rounded" id="hero-image" alt="Responsive image">
+          <uploadableImage v-bind:value="uploadableImageData" v-on:imageSelected="rowImage"/>
+          <!-- <img :src="project.heroImage" class="img-fluid rounded" id="hero-image" alt="Responsive image"> -->
         </div>
         <div class="col">
           <div id="project-attributes">
@@ -34,7 +35,7 @@
       <div class="row">
         <button v-if="!isEditing" @click="isEditing = true">Edit</button>
         <button v-if="isEditing" @click="isEditing = false;">Cancel editing</button>
-        <button v-if="isEditing" @click="updateProject({image: selectedImageRaw, name:name, overview: overview}); isEditing = false">Save</button>
+        <button v-if="isEditing" @click="updateProject({image: selectedImageRaw, name:project.name, overview: project.overview}); isEditing = false">Save</button>
       </div>
     </div>
   </div>
@@ -44,25 +45,44 @@
 import firebase from "../firebase";
 import Editable from './Editable.vue';
 import { mapState, mapActions } from 'vuex';
+import UploadableImageVue from './UploadableImage.vue';
 
 export default {
   components: {
-    'editable': Editable
+    'editable': Editable,
+    'uploadableImage': UploadableImageVue
   },
   data() {
     return {
       d: null,
+      src: "initialSrc",
       name: null,
       newEventDate: null,
       newEventContent: null,
+      selectedImageRaw: "initialselectedImageRawfromProjectGenerals",
       isEditing: false
     };
+  },
+  mounted: function() {
+    this.src = this.project.heroImage
   },
   created() {
     this.fetchProject(this.$route.params.id)
   },
-  computed: mapState(['project']),
+  computed: {
+    uploadableImageData(){
+      return {
+        src: this.project.heroImage,
+        isEditing: this.isEditing,
+        selectedImageRaw: this.selectedImageRaw
+      }
+    },
+    ...mapState(['project']),
+  },
   methods: {
+    rowImage(arg) {
+      this.selectedImageRaw = arg.selectedImageRaw
+    },
     addEvent(){
       firebase.db.collection("projects").doc(this.$route.params.id)
       .update({

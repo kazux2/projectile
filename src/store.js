@@ -8,28 +8,34 @@ export default new Vuex.Store({
     userId: '',
     user: {},
     projects: {},
+    projectID: "",
     project: {}
   },
   actions: {
     fetchProject(context, id) {
       let projectRef = firebase.fetchProject(id)
       projectRef.then(doc => {
+        context.commit('syncProjectID', id)
         context.commit('syncProject', doc.data())
       })
     },
     updateProject(context, { image, name, overview }) {
+      console.log("from store.updateProject ", { image, name, overview })
       if (image) {
         let uploadRef = firebase.uploadProjectImage(image)  // storage
         uploadRef.then(function (imgURL) {
-          firebase.updateProject(theID, imgURL, name, overview)
+          firebase.updateProject(context.state.projectID, imgURL, name, overview)
             .then((docRef) => {
-              context.commit('')
+              context.commit('syncProjectImage', imgURL)
+              context.commit('syncProjectName', name)
+              context.commit('syncProjectOverview', overview)
             })
         });
       } else {
-        firebase.updateProject(theID, context.state.project.heroImage, name, overview)
+        firebase.updateProject(context.state.projectID, context.state.project.heroImage, name, overview)
           .then((docRef) => {
-            context.commit('')
+            context.commit('syncProjectName', name)
+            context.commit('syncProjectOverview', overview)
           })
       }
     },
@@ -76,6 +82,18 @@ export default new Vuex.Store({
     },
     syncProject(state, project) {
       state.project = project;
-    }
+    },
+    syncProjectID(state, projectID) {
+      state.projectID = projectID;
+    },
+    syncProjectImage(state, image) {
+      state.project.image = image;
+    },
+    syncProjectName(state, name) {
+      state.project.name = name;
+    },
+    syncProjectOverview(state, overview) {
+      state.project.overview = overview;
+    },
   }
 });
