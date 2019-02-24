@@ -3,12 +3,12 @@
     <nav class="navbar navbar-light bg-light">
       <a class="navbar-brand" href="#">
         <img src="" width="30" height="30" class="d-inline-block align-top" alt="">
-        PROJECTILE
+        OWARABLE
       </a>
       <button @click="logOut">Log out</button>
       <button v-if="!user" class="btn btn-outline-success my-2 my-sm-0" type="submit" @click="logIn">Search</button>
       <router-link tag="a" v-bind:to="{name:'MyPage'}">
-        <a v-if="user" class="navbar-text">{{user.profileName}}</a>
+        <a v-if="user" class="navbar-text">{{user.nickname}}</a>
       </router-link>
     </nav>
   </div>
