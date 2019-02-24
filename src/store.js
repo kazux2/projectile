@@ -17,17 +17,17 @@ export default new Vuex.Store({
         context.commit('syncProject', doc.data())
       })
     },
-    updateProject(context, { image, title, overview }) {
+    updateProject(context, { image, name, overview }) {
       if (image) {
         let uploadRef = firebase.uploadProjectImage(image)  // storage
         uploadRef.then(function (imgURL) {
-          firebase.updateProject(theID, imgURL, title, overview)
+          firebase.updateProject(theID, imgURL, name, overview)
             .then((docRef) => {
               context.commit('')
             })
         });
       } else {
-        firebase.updateProject(theID, context.state.project.heroImage, title, overview)
+        firebase.updateProject(theID, context.state.project.heroImage, name, overview)
           .then((docRef) => {
             context.commit('')
           })
