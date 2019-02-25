@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from './firebase';
+import realfirebase from 'firebase';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -12,6 +13,25 @@ export default new Vuex.Store({
     project: {}
   },
   actions: {
+    init(context) {
+      realfirebase.auth().onAuthStateChanged(user => {
+        context.commit('storeUserId', user.uid);
+        firebase.db.collection("users")
+          .doc(user.uid)
+          .get().then(doc => {
+            context.commit('syncUser', doc.data());
+          })
+
+        firebase.db.collection("projectsTable")
+          .get().then(docs => {
+            var projects = {};
+            docs.forEach(doc => {
+              projects[doc.id] = doc.data();
+            });
+            context.commit("syncProjects", projects)
+          })
+      });
+    },
     fetchProject(context, id) {
       let projectRef = firebase.fetchProject(id)
       projectRef.then(doc => {
@@ -59,6 +79,9 @@ export default new Vuex.Store({
           })
       }
     },
+    createProject(context, name) {
+      firebase.createProject(name)
+    }
   },
   mutations: {
     storeUserId(state, userId) {

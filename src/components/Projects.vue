@@ -31,9 +31,6 @@ import { mapState } from 'vuex';
 
 import store from '../store.js';
 export default {
-  created() {
-    console.log(this.projects)
-   },
   computed: mapState(['user', 'projects']),
   methods: {
     // createProject() {

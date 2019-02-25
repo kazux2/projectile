@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img v-if="!isEditing" class="img-fluid rounded" :src="image">
+    <img v-if="!selectedImage" class="img-fluid rounded" :src="image">
     <img v-if="selectedImage" class="img-fluid rounded" :src="selectedImage">
     <input v-if="isEditing" class type="file" v-on:change="onFileChange">
   </div>
@@ -24,7 +24,6 @@ export default {
   },
   watch: {
     value() {
-      console.log("value changed: ", this.value)
       this.image = this.value.src;
       this.isEditing = this.value.isEditing;
     },
@@ -48,9 +47,9 @@ export default {
       reader.readAsDataURL(file);
     }
   },
-  computed: {
-    ...mapState(["user"])
-  },
+  // computed: {
+  //   ...mapState(["user"])
+  // },
   props: {
     value: {
       type: Object,

@@ -8,8 +8,9 @@
         <button @click="addEvent">イベントを追加</button>
       </div>
       <div class="event" v-for="(event, index) in project.events" :key="index">
-        <h1>{{ event.date }}</h1>
-        <p>{{ event.content }}</p>
+        <!-- <h1>{{ event.date }}</h1>
+        <p>{{ event.content }}</p> -->
+        <event v-bind:value="event"></event>
       </div>
     </div>
   </div>
@@ -17,13 +18,16 @@
 
 <script>
 import firebase from "../firebase";
+import realfirebase from "firebase";
 import Editable from "./Editable.vue";
 import { mapState, mapActions } from "vuex";
 import ProjectGenerals from './ProjectGenerals.vue';
+import EventVue from './Event.vue';
 
 export default {
   components: {
-    projectGenerals: ProjectGenerals
+    projectGenerals: ProjectGenerals,
+    event: EventVue
   },
   data() {
     return {
@@ -43,7 +47,7 @@ export default {
         .collection("projects")
         .doc(this.$route.params.id)
         .update({
-          events: firebase.firestore.FieldValue.arrayUnion({
+          events: realfirebase.firestore.FieldValue.arrayUnion({
             content: this.newEventContent,
             date: this.newEventDate
           })

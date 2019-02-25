@@ -1,6 +1,7 @@
 import firebase from '@firebase/app';
 import '@firebase/auth';
 import store from './store';
+let emptyProject = require("./assets/emptyProject.json");
 
 const config = {
     apiKey: "AIzaSyD06aXivg20aWiJay3G0HrPsW1ATCX47Y0",
@@ -23,26 +24,6 @@ export default {
     logOut() {
         firebase.auth().signOut();
     },
-    onAuth() {
-        // これstore.jsに移動したい
-        firebase.auth().onAuthStateChanged(user => {
-            store.commit('storeUserId', user.uid);
-            this.db.collection("users")
-                .doc(user.uid)
-                .get().then(doc => {
-                    store.commit('syncUser', doc.data());
-                })
-
-            this.db.collection("projectsTable")
-                .get().then(docs => {
-                    var projects = {};
-                    docs.forEach(doc => {
-                        projects[doc.id] = doc.data();
-                    });
-                    store.commit("syncProjects", projects)
-                })
-        });
-    },
     fetchProject(id){
         return this.db.collection("projects").doc(id).get()
     },
@@ -61,6 +42,18 @@ export default {
                 name: name,
                 overview: overview
             })
+    },
+    createProject(name) {
+        const projectRef = this.db.collection("projects");
+        const projectsTableRef = this.db.collection("projectsTable");
+       
+        emptyProject.name = name;
+        emptyProject.owner = store.state.user.username; //ここemail(username)からidにかえた方がいい?
+        // projectRef.add(Object.assign({}, emptyProject))
+        projectRef.add(emptyProject)
+        .then(docRef => {
+            projectsTableRef.doc(docRef.id).set({ name: name });
+        });
     },
     storageRef: firebase.storage().ref(),
     uploadProfileImage(file) {

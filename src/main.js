@@ -21,7 +21,7 @@ new Vue({
   router,
   store,
   created() {
-    firebase.onAuth()
+    this.$store.dispatch('init')
     this.$router.push('/mypage')
 
     realfirebase.auth().onAuthStateChanged(user => {
