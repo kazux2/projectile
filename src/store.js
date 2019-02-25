@@ -4,8 +4,20 @@ import firebase from './firebase';
 import realfirebase from 'firebase';
 Vue.use(Vuex);
 
+function initialState () {
+  return {
+    isLoggedIn:false,
+    userId: '',
+    user: {},
+    projects: {},
+    projectID: "",
+    project: {}
+  }
+}
+
 export default new Vuex.Store({
   state: {
+    isLoggedIn:false,
     userId: '',
     user: {},
     projects: {},
@@ -15,22 +27,31 @@ export default new Vuex.Store({
   actions: {
     init(context) {
       realfirebase.auth().onAuthStateChanged(user => {
-        context.commit('storeUserId', user.uid);
-        firebase.db.collection("users")
-          .doc(user.uid)
-          .get().then(doc => {
-            context.commit('syncUser', doc.data());
-          })
-
-        firebase.db.collection("projectsTable")
-          .get().then(docs => {
-            var projects = {};
-            docs.forEach(doc => {
-              projects[doc.id] = doc.data();
-            });
-            context.commit("syncProjects", projects)
-          })
+        if(user){
+          context.commit('storeUserId', user.uid);
+          context.commit('storeIsLoggedIn', true);
+          firebase.db.collection("users")
+            .doc(user.uid)
+            .get().then(doc => {
+              context.commit('syncUser', doc.data());
+            })
+  
+          firebase.db.collection("projectsTable")
+            .get().then(docs => {
+              var projects = {};
+              docs.forEach(doc => {
+                projects[doc.id] = doc.data();
+              });
+              context.commit("syncProjects", projects)
+            })
+        } else {
+          context.dispatch('resetState')
+        }
+        
       });
+    },
+    resetState(context){
+      context.commit("resetState");
     },
     fetchProject(context, id) {
       let projectRef = firebase.fetchProject(id)
@@ -84,6 +105,16 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    resetState(state) {
+      // acquire initial state
+      const s = initialState()
+      Object.keys(s).forEach(key => {
+        state[key] = s[key]
+      })
+    },
+    storeIsLoggedIn(state, isLoggedIn){
+      state.isLoggedIn = isLoggedIn
+    },
     storeUserId(state, userId) {
       state.userId = userId;
     },

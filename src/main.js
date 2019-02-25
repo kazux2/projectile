@@ -22,14 +22,13 @@ new Vue({
   store,
   created() {
     this.$store.dispatch('init')
-    this.$router.push('/mypage')
+    this.$router.push('/timeline') // googleのアカウント選択画面(ログイン画面ではなく)からやってきた場合はauthに飛ばすという処理を施したい（じゃないとログインボタン二回押さないといけなくなっちゃう）
 
     realfirebase.auth().onAuthStateChanged(user => {
-      if (user) {
+      console.log("is logged in?:", this.$store.state.isLoggedIn)
+      if (user && this.$store.state.isLoggedIn) {
         this.$router.push('/timeline')
-      } else {
-        this.$router.push('/auth')
-      }
-    })
+      } 
+    });
   }
 });

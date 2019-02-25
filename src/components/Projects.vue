@@ -1,23 +1,23 @@
 <template>
   <div>
-    <hr>
     <div class="container-fluid">
       <div v-for="(value, key, index) in projects" :key="index">
         <ul>
           <div class="row">
-            <router-link tag="li" v-bind:to="{name:'Project', params : {id: key}}">
-              <li>
-                <a>{{ value.name }}</a>
-              </li>
-            </router-link>
+              <b-card img-src="https://placekitten.com/300/300" img-alt="Card image" img-left class="mb-3">
+                    <b-card-text>
+                      <router-link tag="li" v-bind:to="{name:'Project', params : {id: key}}">
+                        <li>
+                          <a>{{ value.name }}</a>
+                        </li>
+                      </router-link>
+                      Some quick example text to build on the card and make up the bulk of the card's content.
+                    </b-card-text>
+              </b-card>
+            
           </div>
         </ul>
       </div>
-
-      <!-- <div class="row">
-        <input type="text" v-model="newProjectName">
-        <button @click="createProject">add project</button>
-      </div> -->
     </div>
   </div>
 </template>
