@@ -38,6 +38,7 @@ export default new Vuex.Store({
           context.dispatch('fetchProjectsTable')
         } else {
           context.dispatch('resetState')
+          context.dispatch('fetchProjectsTable')
         }
         
       });
