@@ -2,8 +2,14 @@
   <div>
     <profileCard></profileCard>
     <div class="row">
-      <input type="text" v-model="newProjectName">
-      <button @click="createProject(newProjectName)">add project</button>
+      <div class="col"></div>
+      <div class="col-4">
+        <b-form-input size="lg" type="text" v-model="newProjectName"/>
+      </div>
+      <div class="col-3">
+        <b-button variant="info"  size="lg" @click="createProject(newProjectName)">add project</b-button>
+      </div>
+      <div class="col"></div>
     </div>
     <projects></projects>
   </div>

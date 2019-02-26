@@ -13,6 +13,10 @@ li {
     list-style-type: none;
 }
 
+div#profile-card {
+    margin: 3rem;
+}
+
 div#projects ul {
     margin-top: 1rem;
 }
