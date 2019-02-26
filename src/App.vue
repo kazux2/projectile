@@ -15,7 +15,7 @@ import Navbar from './components/Navbar.vue';
 
 export default {
   name: 'app',
-  computed: mapState(['user', 'projects']),
+  computed: mapState(['user', 'projectsTable']),
   components: {
     'navbar': Navbar
   },

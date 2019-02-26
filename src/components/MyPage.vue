@@ -24,6 +24,7 @@ export default {
   },
   data() {
     return {
+      // ここら辺いらないはず
       isLoggedIn: false,
       email: "",
       displayName: "",

@@ -85,7 +85,7 @@ export default {
         this.$store.commit('syncUserSummery', newValue)
       }
     },
-    ...mapState(['user', 'projects'])
+    ...mapState(['user', 'projectsTable'])
   }
 };
 </script>

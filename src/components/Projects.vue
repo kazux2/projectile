@@ -2,7 +2,7 @@
   <div>
     <div id="projects" class="container-fluid">
       <ul>
-      <div v-for="(value, key, index) in projects" :key="index">
+      <div v-for="(value, key, index) in projectsTable" :key="index">
         <li>
           <div class="row">
               <b-card img-src="https://placekitten.com/300/300" img-alt="Card image" img-left class="mb-3">
@@ -32,7 +32,7 @@ import { mapState } from 'vuex';
 
 import store from '../store.js';
 export default {
-  computed: mapState(['user', 'projects']),
+  computed: mapState(['user', 'projectsTable']),
   methods: {
     // createProject() {
     //   const projectRef = db.collection("projects");

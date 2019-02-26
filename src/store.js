@@ -9,7 +9,7 @@ function initialState () {
     isLoggedIn:false,
     userId: '',
     user: {},
-    projects: {},
+    projectsTable: {},
     projectID: "",
     project: {}
   }
@@ -20,7 +20,7 @@ export default new Vuex.Store({
     isLoggedIn:false,
     userId: '',
     user: {},
-    projects: {},
+    projectsTable: {},
     projectID: "",
     project: {}
   },
@@ -35,7 +35,7 @@ export default new Vuex.Store({
             .get().then(doc => {
               context.commit('syncUser', doc.data());
             })
-          context.dispatch('fetchProjects')
+          context.dispatch('fetchProjectsTable')
         } else {
           context.dispatch('resetState')
         }
@@ -52,14 +52,14 @@ export default new Vuex.Store({
         context.commit('syncProject', doc.data())
       })
     },
-    fetchProjects(context) {
+    fetchProjectsTable(context) {
       firebase.db.collection("projectsTable")
             .get().then(docs => {
-              var projects = {};
+              var projectsTable = {};
               docs.forEach(doc => {
-                projects[doc.id] = doc.data();
+                projectsTable[doc.id] = doc.data();
               });
-              context.commit("syncProjects", projects)
+              context.commit("syncProjectsTable", projectsTable)
             })
     },
     updateProject(context, { image, name, overview }) {
@@ -107,7 +107,7 @@ export default new Vuex.Store({
       .then(docRef => {
         firebase.addProjectInProjectsTable(docRef.id, name)
         .then(docRef => {
-          context.dispatch('fetchProjects')
+          context.dispatch('fetchProjectsTable')
         });
     });
     }
@@ -139,8 +139,8 @@ export default new Vuex.Store({
     syncUserSummery(state, summery) {
       state.user.summery = summery;
     },
-    syncProjects(state, projects) {
-      state.projects = projects;
+    syncProjectsTable(state, projectsTable) {
+      state.projectsTable = projectsTable;
     },
     syncProject(state, project) {
       state.project = project;

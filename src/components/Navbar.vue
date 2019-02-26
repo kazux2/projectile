@@ -68,7 +68,7 @@ import { mapState } from "vuex";
 import firebase from "../firebase";
 export default {
   mounted(){console.log(this.$store.state.userId)},
-  computed: mapState(["isLoggedIn", "user", "projects"]),
+  computed: mapState(["isLoggedIn", "user", "projectsTable"]),
   methods: {
     logOut() {
       firebase.logOut();
