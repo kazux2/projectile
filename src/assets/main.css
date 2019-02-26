@@ -1,4 +1,65 @@
-/* img {
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC:300,400,700,900&subset=japanese');
+
+#app{
+    font-family: 'Noto Sans TC', Helvetica, Arial, sans-serif;
+}
+
+
+img {
     width: 100%;
     height: 100%;
+}
+li {
+    list-style-type: none;
+}
+
+div#projects ul {
+    margin-top: 1rem;
+}
+
+div#projects li {
+    margin: 5rem 0;
+}
+
+/* .card-text li {
+    list-style-type: none;
+} */
+
+div#project {
+    margin-top: 3rem;
+}
+
+
+div#project-name h1{
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+div#project-name input{
+    margin-bottom: 0.3rem;
+}
+
+div#project-attributes h2{
+    font-weight: 400;
+    margin-bottom: 0rem;
+    font-size: 1.5rem;
+}
+
+div#project-generals ul{
+    padding-left: 1.5rem; 
+}
+
+div#project-overview h2{
+    /* font-weight: 400; */
+    /* margin-left: 1rem; */
+}
+
+div#project-overview p{
+    /* font-weight: 400; */
+    margin: 1rem;
+}
+
+
+/* div#project-overview textarea{
+    width: 32rem;
+    margin: 1rem;
 } */

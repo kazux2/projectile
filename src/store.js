@@ -35,15 +35,7 @@ export default new Vuex.Store({
             .get().then(doc => {
               context.commit('syncUser', doc.data());
             })
-  
-          firebase.db.collection("projectsTable")
-            .get().then(docs => {
-              var projects = {};
-              docs.forEach(doc => {
-                projects[doc.id] = doc.data();
-              });
-              context.commit("syncProjects", projects)
-            })
+          context.dispatch('fetchProjects')
         } else {
           context.dispatch('resetState')
         }
@@ -60,8 +52,17 @@ export default new Vuex.Store({
         context.commit('syncProject', doc.data())
       })
     },
+    fetchProjects(context) {
+      firebase.db.collection("projectsTable")
+            .get().then(docs => {
+              var projects = {};
+              docs.forEach(doc => {
+                projects[doc.id] = doc.data();
+              });
+              context.commit("syncProjects", projects)
+            })
+    },
     updateProject(context, { image, name, overview }) {
-      console.log("from store.updateProject ", { image, name, overview })
       if (image) {
         let uploadRef = firebase.uploadProjectImage(image)  // storage
         uploadRef.then(function (imgURL) {
@@ -78,7 +79,8 @@ export default new Vuex.Store({
             context.commit('syncProjectName', name)
             context.commit('syncProjectOverview', overview)
           })
-      }
+      };
+      firebase.addProjectInProjectsTable(context.state.projectID, name)
     },
     updateUserProfile(context, { image, nickname, summery }) {
       //actionの引数は2こなのでオブジェクトにまとめてる
@@ -102,6 +104,12 @@ export default new Vuex.Store({
     },
     createProject(context, name) {
       firebase.createProject(name)
+      .then(docRef => {
+        firebase.addProjectInProjectsTable(docRef.id, name)
+        .then(docRef => {
+          context.dispatch('fetchProjects')
+        });
+    });
     }
   },
   mutations: {

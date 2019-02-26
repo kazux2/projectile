@@ -13,7 +13,7 @@ export default {
     return {
       image: "",
       selectedImage: "",
-      selectedImageRaw: "initialSelectedImageRawFromUploadable",
+      selectedImageRaw: null,
       isEditing: "initialIsEditing"
     };
   },

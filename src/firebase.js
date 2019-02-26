@@ -45,15 +45,17 @@ export default {
     },
     createProject(name) {
         const projectRef = this.db.collection("projects");
-        const projectsTableRef = this.db.collection("projectsTable");
        
         emptyProject.name = name;
-        emptyProject.owner = store.state.user.username; //ここemail(username)からidにかえた方がいい?
+        emptyProject.owner = store.state.userId; //ここemail(username)からidにかえた方がいい?
         // projectRef.add(Object.assign({}, emptyProject))
-        projectRef.add(emptyProject)
-        .then(docRef => {
-            projectsTableRef.doc(docRef.id).set({ name: name });
-        });
+        return projectRef.add(emptyProject)
+        
+    },
+    addProjectInProjectsTable(docId, name) {
+        const projectsTableRef = this.db.collection("projectsTable");
+        return projectsTableRef.doc(docId).set({ name: name })
+    
     },
     storageRef: firebase.storage().ref(),
     uploadProfileImage(file) {

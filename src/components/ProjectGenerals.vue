@@ -1,21 +1,22 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-6">
-        <uploadableImage v-bind:value="uploadableImageData" v-on:imageSelected="rowImage"/>
-        <!-- <img :src="project.heroImage" class="img-fluid rounded" id="hero-image" alt="Responsive image"> -->
-      </div>
-      <div class="col">
-        <div id="project-attributes">
+  <div id="project-generals">
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <uploadableImage v-bind:value="uploadableImageData" v-on:imageSelected="rowImage"/>
+          <!-- <img :src="project.heroImage" class="img-fluid rounded" id="hero-image" alt="Responsive image"> -->
+        </div>
+        <div id="project-name" class="col">
           <h1 v-if="!isEditing">{{project.name}}</h1>
-          <input v-if="isEditing" type="text" v-model="projectNameBufferComputed">
-          <div id="member">
-            <h2>Member</h2>
+          <b-form-input size="lg" v-if="isEditing" type="text" v-model="projectNameBufferComputed"/>
+          <div id="project-attributes">
+            <h2>Members</h2>
             <ul>
               <li v-for="member in project.members" :key="member">{{ member }}</li>
+              <li>some one</li>
+              <li>dare ka</li>
+              <li>tomoda chi</li>
             </ul>
-          </div>
-          <div id="resources">
             <h2>Resources</h2>
             <ul>
               <li v-for="(value, key, index) in project.resources" :key="index">
@@ -25,21 +26,46 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div id="project-summery">
-        <h1>プロジェクト概要</h1>
-        <p v-if="!isEditing">{{project.overview}}</p>
-        <textarea v-if="isEditing" type="text" v-model="overviewBufferComputed"></textarea>
+      <div class="row">
+        <div id="project-overview">
+          <h2>プロジェクト概要</h2>
+          <p v-if="!isEditing">{{project.overview}}</p>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <button v-if="!isEditing" @click="isEditing = true">Edit</button>
-      <button v-if="isEditing" @click="isEditing = false;">Cancel editing</button>
-      <button
-        v-if="isEditing"
-        @click="updateProject({image: selectedImageRaw, name:project.name, overview: project.overview}); isEditing = false"
-      >Save</button>
+
+      <b-row class="my-1">
+      <b-col>
+        <b-form-textarea v-if="isEditing" type="text" v-model="overviewBufferComputed" rows="6"/>
+      </b-col>
+      </b-row>
+
+      <b-container class="bv-example-row">
+        <b-row align-h="end">
+          <!-- <b-col cols="4"> -->
+          <b-button
+            class="float-right"
+            variant="secondary"
+            v-if="!isEditing"
+            @click="isEditing = true"
+          >Edit</b-button>
+
+          <b-button
+            class="float-right"
+            variant="warning"
+            v-if="isEditing"
+            @click="isEditing = false;"
+          >Cancel editing</b-button>
+          <b-button
+            class="float-right"
+            variant="info"
+            v-if="isEditing"
+            @click="updateProject({image: selectedImageRaw, name:project.name, overview: project.overview}); isEditing = false"
+          >Save</b-button>
+
+          <!-- </b-col> -->
+        </b-row>
+      </b-container>
+      <div class="row"></div>
     </div>
   </div>
 </template>
@@ -64,7 +90,7 @@ export default {
       projectNameBuffer: "",
       newEventDate: null,
       newEventContent: null,
-      selectedImageRaw: "initialselectedImageRawfromProjectGenerals",
+      selectedImageRaw: null,
       isEditing: false
     };
   },
@@ -81,8 +107,8 @@ export default {
         return this.projectNameBuffer;
       },
       set: function(newValue) {
-        this.overviewBuffer = newValue;
-        this.$store.commit("syncProjectOverview", newValue);
+        this.projectNameBuffer = newValue;
+        this.$store.commit("syncProjectName", newValue);
       }
     },
     overviewBufferComputed: {
