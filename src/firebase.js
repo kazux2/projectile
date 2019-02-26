@@ -52,9 +52,18 @@ export default {
         return projectRef.add(emptyProject)
         
     },
-    addProjectInProjectsTable(docId, name) {
+    setProjectInProjectsTable(docId, name, members, imageURL) {
+        if(!imageURL){
+            imageURL = "https://placekitten.com/300/300"
+        }
         const projectsTableRef = this.db.collection("projectsTable");
-        return projectsTableRef.doc(docId).set({ name: name })
+        return projectsTableRef.doc(docId)
+        .set({
+            name: name,
+            owner: store.state.userId,
+            members: [],
+            imageURL: imageURL
+        })
     
     },
     storageRef: firebase.storage().ref(),

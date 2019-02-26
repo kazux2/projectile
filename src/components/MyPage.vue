@@ -1,11 +1,11 @@
 <template>
   <div>
     <profileCard></profileCard>
-    <projects></projects>
     <div class="row">
       <input type="text" v-model="newProjectName">
       <button @click="createProject(newProjectName)">add project</button>
     </div>
+    <projects></projects>
   </div>
 </template>
 

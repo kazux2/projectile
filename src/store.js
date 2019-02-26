@@ -72,6 +72,10 @@ export default new Vuex.Store({
               context.commit('syncProjectName', name)
               context.commit('syncProjectOverview', overview)
             })
+          firebase.setProjectInProjectsTable(context.state.projectID, name, null, imgURL)
+          .then(docRef => {
+            context.dispatch('fetchProjectsTable')
+          });
         });
       } else {
         firebase.updateProject(context.state.projectID, context.state.project.heroImage, name, overview)
@@ -79,8 +83,11 @@ export default new Vuex.Store({
             context.commit('syncProjectName', name)
             context.commit('syncProjectOverview', overview)
           })
+        firebase.setProjectInProjectsTable(context.state.projectID, name, null, context.state.project.heroImage)
+        .then(docRef => {
+          context.dispatch('fetchProjectsTable')
+        });
       };
-      firebase.addProjectInProjectsTable(context.state.projectID, name)
     },
     updateUserProfile(context, { image, nickname, summery }) {
       //actionの引数は2こなのでオブジェクトにまとめてる
@@ -103,9 +110,12 @@ export default new Vuex.Store({
       }
     },
     createProject(context, name) {
+      if (!name) {
+        name = "このプロジェクトの名前！"
+      }
       firebase.createProject(name)
       .then(docRef => {
-        firebase.addProjectInProjectsTable(docRef.id, name)
+        firebase.setProjectInProjectsTable(docRef.id, name, null, null)
         .then(docRef => {
           context.dispatch('fetchProjectsTable')
         });

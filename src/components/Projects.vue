@@ -5,7 +5,7 @@
       <div v-for="(value, key, index) in projectsTable" :key="index">
         <li>
           <div class="row">
-              <b-card img-src="https://placekitten.com/300/300" img-alt="Card image" img-left class="mb-3">
+              <b-card :img-src="value.imageURL" img-alt="Card image" img-left class="mb-3">
                     <b-card-text>
                       <router-link tag="h2" v-bind:to="{name:'Project', params : {id: key}}">
                         <h2><a>{{ value.name }}</a></h2>
