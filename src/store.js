@@ -15,6 +15,14 @@ function initialState () {
   }
 }
 
+function compare(a,b) {
+  if (a.created < b.created)
+    return -1;
+  if (a.created > b.created)
+    return 1;
+  return 0;
+}
+
 export default new Vuex.Store({
   state: {
     isLoggedIn:false,
@@ -55,6 +63,7 @@ export default new Vuex.Store({
     },
     fetchProjectsTable(context) {
       firebase.db.collection("projectsTable")
+            .orderBy("created", "desc")
             .get().then(docs => {
               var projectsTable = {};
               docs.forEach(doc => {
@@ -112,11 +121,12 @@ export default new Vuex.Store({
     },
     createProject(context, name) {
       if (!name) {
-        name = "このプロジェクトの名前！"
+        name = "What a project name!"
       }
-      firebase.createProject(name)
+      let createdTime = Date.now()
+      firebase.createProject(name, createdTime)
       .then(docRef => {
-        firebase.setProjectInProjectsTable(docRef.id, name, null, null)
+        firebase.setProjectInProjectsTable(docRef.id, name, null, null, createdTime)
         .then(docRef => {
           context.dispatch('fetchProjectsTable')
         });

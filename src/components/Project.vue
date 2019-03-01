@@ -4,6 +4,7 @@
     <div class="container">
       <div class="row">
         <input type="date" v-model="newEventDate">
+        <input type="time" v-model="newEventTime"/>
         <input type="text" v-model="newEventContent">
         <button @click="addEvent">イベントを追加</button>
       </div>
@@ -34,6 +35,7 @@ export default {
       d: null,
       name: null,
       newEventDate: null,
+      newEventTime: null,
       newEventContent: null
     };
   },
@@ -49,7 +51,7 @@ export default {
         .update({
           events: realfirebase.firestore.FieldValue.arrayUnion({
             content: this.newEventContent,
-            date: this.newEventDate
+            date: new Date(this.newEventDate + " " + this.newEventTime).getTime()
           })
         });
     },

@@ -43,16 +43,17 @@ export default {
                 overview: overview
             })
     },
-    createProject(name) {
+    createProject(name, created) {
         const projectRef = this.db.collection("projects");
        
         emptyProject.name = name;
-        emptyProject.owner = store.state.userId; //ここemail(username)からidにかえた方がいい?
+        emptyProject.owner = store.state.userId;
+        emptyProject.created = created;
         // projectRef.add(Object.assign({}, emptyProject))
         return projectRef.add(emptyProject)
         
     },
-    setProjectInProjectsTable(docId, name, members, imageURL) {
+    setProjectInProjectsTable(docId, name, members, imageURL, createdTime) {
         if(!imageURL){
             imageURL = "https://placekitten.com/300/300"
         }
@@ -62,7 +63,8 @@ export default {
             name: name,
             owner: store.state.userId,
             members: [],
-            imageURL: imageURL
+            imageURL: imageURL,
+            created: createdTime
         })
     
     },

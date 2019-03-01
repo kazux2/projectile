@@ -5,7 +5,7 @@
           <uploadableImage v-bind:value="uploadableImageData" v-on:imageSelected="rowImage"/>
       </div>-->
       <div class="col">
-        <h1 v-if="!isEditing">{{ value.date }}</h1>
+        <h1 v-if="!isEditing">{{ convertTimestampToDate(value.date) }}</h1>
         <input v-if="isEditing" type="date" v-model="dateBufferComputed">
 
         <p v-if="!isEditing">{{ value.content }}</p>
@@ -76,22 +76,12 @@ export default {
     //   };
     // },
   },
-  // methods: {
-  //   rowImage(arg) {
-  //     this.selectedImageRaw = arg.selectedImageRaw;
-  //   },
-  //   addEvent() {
-  //     firebase.db
-  //       .collection("projects")
-  //       .doc(this.$route.params.id)
-  //       .update({
-  //         events: firebase.firestore.FieldValue.arrayUnion({
-  //           content: this.newEventContent,
-  //           date: this.newEventDate
-  //         })
-  //       });
-  //   },
-  //   ...mapActions(["fetchProject", "updateProject"])
-  // }
+  methods: {
+    convertTimestampToDate(arg) {
+      let dt = new Date(arg)
+      let formattedDateString = `${dt.getFullYear()}年 ${dt.getMonth()+1}月 ${dt.getDate()}日 ${dt.getHours()}時 ${dt.getMinutes()}分`
+      return formattedDateString 
+    }
+  }
 };
 </script>

@@ -8,7 +8,10 @@ import firebaseui from "firebaseui";
 export default {
   name: "auth",
   mounted() {
-    let uiConfig = { signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID] };
+    let uiConfig = { 
+      signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID],
+      'credentialHelper': firebaseui.auth.CredentialHelper.NONE
+       };
     let ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
     ui.start("#firebaseui-auth-container", uiConfig);
   }
