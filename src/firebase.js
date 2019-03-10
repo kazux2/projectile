@@ -53,7 +53,7 @@ export default {
         return projectRef.add(emptyProject)
         
     },
-    setProjectInProjectsTable(docId, name, members, imageURL, createdTime) {
+    setProjectInProjectsTable(docId, name, members, imageURL, time) {
         if(!imageURL){
             imageURL = "https://placekitten.com/300/300"
         }
@@ -64,9 +64,8 @@ export default {
             owner: store.state.userId,
             members: [],
             imageURL: imageURL,
-            created: createdTime
+            updated: time
         })
-    
     },
     storageRef: firebase.storage().ref(),
     uploadProfileImage(file) {

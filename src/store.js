@@ -15,14 +15,6 @@ function initialState () {
   }
 }
 
-function compare(a,b) {
-  if (a.created < b.created)
-    return -1;
-  if (a.created > b.created)
-    return 1;
-  return 0;
-}
-
 export default new Vuex.Store({
   state: {
     isLoggedIn:false,
@@ -63,7 +55,7 @@ export default new Vuex.Store({
     },
     fetchProjectsTable(context) {
       firebase.db.collection("projectsTable")
-            .orderBy("created", "desc")
+            .orderBy("updated", "desc")
             .get().then(docs => {
               var projectsTable = {};
               docs.forEach(doc => {
@@ -73,7 +65,9 @@ export default new Vuex.Store({
             })
     },
     updateProject(context, { image, name, overview }) {
+      let updatedTime = Date.now()
       if (image) {
+        console.log("updateProject: with image")
         let uploadRef = firebase.uploadProjectImage(image)  // storage
         uploadRef.then(function (imgURL) {
           firebase.updateProject(context.state.projectID, imgURL, name, overview)
@@ -82,18 +76,19 @@ export default new Vuex.Store({
               context.commit('syncProjectName', name)
               context.commit('syncProjectOverview', overview)
             })
-          firebase.setProjectInProjectsTable(context.state.projectID, name, null, imgURL)
+          firebase.setProjectInProjectsTable(context.state.projectID, name, null, imgURL, updatedTime)
           .then(docRef => {
             context.dispatch('fetchProjectsTable')
           });
         });
       } else {
+        console.log("updateProject: w/o image")
         firebase.updateProject(context.state.projectID, context.state.project.heroImage, name, overview)
           .then((docRef) => {
             context.commit('syncProjectName', name)
             context.commit('syncProjectOverview', overview)
           })
-        firebase.setProjectInProjectsTable(context.state.projectID, name, null, context.state.project.heroImage)
+        firebase.setProjectInProjectsTable(context.state.projectID, name, null, context.state.project.heroImage, updatedTime)
         .then(docRef => {
           context.dispatch('fetchProjectsTable')
         });
