@@ -32,23 +32,6 @@ import { mapState } from 'vuex';
 
 import store from '../store.js';
 export default {
-  computed: mapState(['user', 'projectsTable']),
-  methods: {
-    // createProject() {
-    //   const projectRef = db.collection("projects");
-    //   const projectsTableRef = db.collection("projectsTable");
-    //   emptyProject.owner = this.email;
-    //   emptyProject.name = this.newProjectName;
-    //   projectRef.add(emptyProject).then(docRef => {
-    //     projectsTableRef.doc(docRef.id).set({ name: this.newProjectName });
-    //   });
-    // },
-    logOut() {
-      firebase.logOut();
-    },
-    logIn() {
-      firebase.logIn();
-    }
-  }
+  props: ['projectsTable'],
 };
 </script>
