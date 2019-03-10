@@ -11,7 +11,8 @@ function initialState () {
     user: {},
     projectsTable: {},
     projectID: "",
-    project: {}
+    project: {},
+    events:[]
   }
 }
 
@@ -22,7 +23,8 @@ export default new Vuex.Store({
     user: {},
     projectsTable: {},
     projectID: "",
-    project: {}
+    project: {},
+    events:[]
   },
   actions: {
     init(context) {
@@ -53,6 +55,23 @@ export default new Vuex.Store({
         context.commit('syncProject', doc.data())
       })
     },
+    fetchEvents(context, id) {
+      let eventsRef = firebase.fetchEvents(id)
+      let events = []
+      eventsRef.then(function (querySnapshot) {
+        //ここarrayに変換せずともそのまま使う方法ある？
+        querySnapshot.forEach(function (doc) {
+          events.push(doc.data());
+        })
+        context.commit('syncEvents', events)
+      })
+    },
+    updateEvent(context, {projectId, eventId, content}){
+      firebase.updateEvent(projectId, eventId, content)
+      .then(docs => {
+        context.dispatch('fetchEvents', projectId)
+      })
+    },
     fetchProjectsTable(context) {
       firebase.db.collection("projectsTable")
             .orderBy("updated", "desc")
@@ -68,17 +87,26 @@ export default new Vuex.Store({
       let updatedTime = Date.now()
       if (image) {
         console.log("updateProject: with image")
-        let uploadRef = firebase.uploadProjectImage(image)  // storage
-        uploadRef.then(function (imgURL) {
-          firebase.updateProject(context.state.projectID, imgURL, name, overview)
-            .then((docRef) => {
-              context.commit('syncProjectImage', imgURL)
-              context.commit('syncProjectName', name)
-              context.commit('syncProjectOverview', overview)
-            })
-          firebase.setProjectInProjectsTable(context.state.projectID, name, null, imgURL, updatedTime)
-          .then(docRef => {
-            context.dispatch('fetchProjectsTable')
+        let uploadTask = firebase.uploadProjectImage(image)  // storage
+        uploadTask.on('state_changed', function (snapshot) {
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        }, function (error) {
+          // Handle unsuccessful uploads
+        }, function () {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          uploadTask.snapshot.ref.getDownloadURL().then(function (imgURL) {
+            firebase.updateProject(context.state.projectID, imgURL, name, overview)
+              .then((docRef) => {
+                context.commit('syncProjectImage', imgURL)
+                context.commit('syncProjectName', name)
+                context.commit('syncProjectOverview', overview)
+              })
+            firebase.setProjectInProjectsTable(context.state.projectID, name, null, imgURL, updatedTime)
+              .then(docRef => {
+                context.dispatch('fetchProjectsTable')
+              });
           });
         });
       } else {
@@ -97,15 +125,25 @@ export default new Vuex.Store({
     updateUserProfile(context, { image, nickname, summery }) {
       //actionの引数は2こなのでオブジェクトにまとめてる
       if (image) {
-        let uploadRef = firebase.uploadProfileImage(image)  // storage
-        uploadRef.then(function (imgURL) {
-          firebase.updateUserProfile(context.state.userId, imgURL, nickname, summery)
-            .then((docRef) => {
-              context.commit('syncUserImageURL', imgURL)
-              context.commit('syncUserNickname', nickname)
-              context.commit('syncUserSummery', summery)
-            })
+        let uploadTask = firebase.uploadProfileImage(image)  // storage
+        uploadTask.on('state_changed', function (snapshot) {
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        }, function (error) {
+          // Handle unsuccessful uploads
+        }, function () {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          uploadTask.snapshot.ref.getDownloadURL().then(function (imgURL) {
+            firebase.updateUserProfile(context.state.userId, imgURL, nickname, summery)
+              .then((docRef) => {
+                context.commit('syncUserImageURL', imgURL)
+                context.commit('syncUserNickname', nickname)
+                context.commit('syncUserSummery', summery)
+              })
+          });
         });
+
       } else {
         firebase.updateUserProfile(context.state.userId, context.state.user.image, nickname, summery)
           .then((docRef) => {
@@ -126,6 +164,12 @@ export default new Vuex.Store({
           context.dispatch('fetchProjectsTable')
         });
     });
+    },
+    addEvent(context, {projectId, date, content}){
+      firebase.addEvent(projectId, date, content)
+      .then((docRef) => {
+        context.dispatch('fetchEvents', projectId)
+      })
     }
   },
   mutations: {
@@ -172,6 +216,9 @@ export default new Vuex.Store({
     },
     syncProjectOverview(state, overview) {
       state.project.overview = overview;
+    },
+    syncEvents(state, events) {
+      state.events = events;
     },
   }
 });

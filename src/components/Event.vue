@@ -1,22 +1,43 @@
 <template>
-  <div>
+  <div id="event">
     <div class="row">
-      <!-- <div class="col-6">
-          <uploadableImage v-bind:value="uploadableImageData" v-on:imageSelected="rowImage"/>
-      </div>-->
       <div class="col">
-        <h1 v-if="!isEditing">{{ convertTimestampToDate(value.date) }}</h1>
-        <input v-if="isEditing" type="date" v-model="dateBufferComputed">
-
-        <p v-if="!isEditing">{{ value.content }}</p>
-        <textarea v-if="isEditing" type="text" v-model="contentBufferComputed"></textarea>
+        <h1>{{ convertTimestampToDate(value.eventDate) }}</h1>
       </div>
     </div>
-    <!-- <div class="row">
-      <button v-if="!isEditing" @click="isEditing = true">Edit</button>
-      <button v-if="isEditing" @click="isEditing = false;">Cancel editing</button>
-      <button v-if="isEditing" @click="updateProject({image: selectedImageRaw, name:project.name, overview: project.overview}); isEditing = false">Save</button>
-    </div> -->
+
+    <div class="row">
+      <div class="col"  v-if="project.owner != userId">
+        <p>{{ value.eventContent }}</p>
+      </div>
+
+      <div class="col"  v-if="project.owner == userId">
+        <p v-if="!isEditingEventContent" v-on:click="isEditingEventContent = true">{{ value.eventContent }}</p>
+        <b-form-textarea
+          v-if="isEditingEventContent" 
+          v-model="contentBuffer"
+          placeholder="イベントの内容"
+          rows="6"
+          max-rows="6"
+        />
+      </div>
+    </div>
+    <b-container>
+      <b-row align-h="end">
+        <b-button
+          class="float-right"
+          variant="warning"
+          v-if="isEditingEventContent"
+          @click="isEditingEventContent = false"
+          >Cancel editing</b-button>
+        <b-button
+          class="float-right"
+          variant="info"
+          v-if="isEditingEventContent"
+          @click="updateEvent({projectId: projectId, eventId: dateBuffer, content: contentBuffer}); isEditingEventContent = false"
+        >Save</b-button>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -36,52 +57,38 @@ export default {
       dateBuffer: "",
       contentBuffer: "",
       selectedImageRaw: "initialselectedImageRawfromProjectGenerals",
-      isEditing: false
+      isEditingEventContent: false,
+      projectId: ""
     };
+  },
+  created() {
+      this.projectId = this.value.projectId;
+      this.dateBuffer = this.value.eventDate;
+      this.contentBuffer = this.value.eventContent;
   },
   props: ["value"],
   watch: {
     value() {
-      console.log("Event value changed: ", this.value)
-      this.date = this.value.date;
-      this.contnet = this.value.content;
+      this.dateBuffer = this.value.eventDate;
+      this.contentBuffer = this.value.eventContent;
     }
   },
   computed: {
-    dateBufferComputed: {
-      get: function() {
-        this.dateBuffer = this.$store.state.project.event;
-        return this.dateBuffer;
-      },
-      set: function(newValue) {
-        this.overviewBuffer = newValue;
-        this.$store.commit("syncProjectEventDate", newValue);
-      }
-    },
-    contentBufferComputed: {
-      get: function() {
-        this.overviewBuffer = this.$store.state.project.overview;
-        return this.overviewBuffer;
-      },
-      set: function(newValue) {
-        this.overviewBuffer = newValue;
-        this.$store.commit("syncProjectEventContent", newValue);
-      }
-    },
-    // uploadableImageData() {
-    //   return {
-    //     src: this.project.heroImage,
-    //     isEditing: this.isEditing,
-    //     selectedImageRaw: this.selectedImageRaw
-    //   };
+    // contentBufferComputed: {
+    //   get: function() {
+    //     this.contentBuffer = this.$store.state.event[x].content;
+    //     return this.contentBuffer;
+    //   }
     // },
+    ...mapState(["project", "userId"])
   },
   methods: {
     convertTimestampToDate(arg) {
       let dt = new Date(arg)
       let formattedDateString = `${dt.getFullYear()}年 ${dt.getMonth()+1}月 ${dt.getDate()}日 ${dt.getHours()}時 ${dt.getMinutes()}分`
       return formattedDateString 
-    }
+    },
+    ...mapActions(["updateEvent"])
   }
 };
 </script>

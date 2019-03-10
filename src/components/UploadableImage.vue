@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="updatable-image">
     <img v-if="!selectedImage" class="img-fluid rounded" :src="image">
     <img v-if="selectedImage" class="img-fluid rounded" :src="selectedImage">
     <input v-if="isEditing" class type="file" v-on:change="onFileChange">

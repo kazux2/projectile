@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="dark" variant="info">
-    <b-navbar-brand to="/timeline">OWARABLE</b-navbar-brand>
+    <b-navbar-brand to="/timeline">Projectile!</b-navbar-brand>
       <b-navbar-nav class="ml-auto">
         <b-button v-if="!isLoggedIn" size="sm" class="my-2 my-sm-0" @click="logIn">Log in</b-button>
         <b-nav-item-dropdown right v-if="isLoggedIn">

@@ -27,6 +27,9 @@ export default {
     fetchProject(id){
         return this.db.collection("projects").doc(id).get()
     },
+    fetchEvents(id){
+        return this.db.collection("projects").doc(id).collection("events").orderBy("date", "desc").get()
+    },
     updateUserProfile(userId, imgURL, nickname, summery) {
         return this.db.collection("users").doc(userId)
             .update({
@@ -67,17 +70,41 @@ export default {
             updated: time
         })
     },
+    addEvent(projectId, date, content){
+        const projectRef = this.db
+          .collection("projects")
+          .doc(projectId).collection("events").doc(date.toString())
+
+        return projectRef.set({
+            owner: store.state.userId, //firestoreのルールで、subcollectionでのバリデーションの仕方がわからないので、親collectionの構造に合わせる。
+            date: date,
+            content: content
+          });
+
+    },
+    updateEvent(projectId, eventId, content){
+        const projectRef = this.db
+          .collection("projects")
+          .doc(projectId).collection("events").doc(eventId.toString())
+
+        return projectRef.set({
+            owner: store.state.userId,
+            date: eventId,
+            content: content
+          });
+    },
     storageRef: firebase.storage().ref(),
     uploadProfileImage(file) {
         //関数名でfirestoreなのかfirebase storageなのかわからん問題ある
-        var profileRef = this.storageRef.child(`${store.state.userId}/profile.png`); //拡張子対応
-        profileRef.put(file)
-        return profileRef.getDownloadURL()
+        let extension = file.name.split('.').pop()
+        return this.storageRef
+        .child(`${store.state.userId}/userProfile/profile.${extension}`) //拡張子対応
+        .put(file)
     },
     uploadProjectImage(file){
-        console.log("uploading file: ", file)
-        var profileRef = this.storageRef.child(`${store.state.userId}/project/heroImage.png`); //拡張子対応
-        profileRef.put(file)
-        return profileRef.getDownloadURL()
+        let extension = file.name.split('.').pop()
+        return this.storageRef
+        .child(`${store.state.userId}/projects/${store.state.projectID}/heroImage.${extension}`)
+        .put(file)
     }
 };

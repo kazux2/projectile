@@ -39,13 +39,13 @@
       </b-col>
       </b-row>
 
-      <b-container class="bv-example-row">
+      <b-container>
         <b-row align-h="end">
           <!-- <b-col cols="4"> -->
           <b-button
             class="float-right"
             variant="secondary"
-            v-if="!isEditing"
+            v-if="!isEditing && project.owner == userId"
             @click="isEditing = true"
           >Edit</b-button>
 
@@ -65,7 +65,18 @@
           <!-- </b-col> -->
         </b-row>
       </b-container>
-      <div class="row"></div>
+{{selectedImageRaw}}
+      <!-- <b-container>
+        <b-row align-h="center">
+          <b-button
+            class="float-right"
+            variant="danger"
+            size="lg"
+            v-if="isEditing"
+            @click=""
+          >Delete Project</b-button>
+        </b-row>
+      </b-container> -->
     </div>
   </div>
 </template>
@@ -128,7 +139,7 @@ export default {
         selectedImageRaw: this.selectedImageRaw
       };
     },
-    ...mapState(["project"])
+    ...mapState(["project", "userId"])
   },
   methods: {
     rowImage(arg) {
