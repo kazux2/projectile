@@ -62,8 +62,8 @@ workflows:
   version: 2
   projectile-continuous-integration:
     jobs:
-      - staging-deploy
-        filters:  # using regex filters requires the entire branch to match
-          branches:
-            only:  # only branches matching the below regex filters will run
-              - develop
+      - staging-deploy:
+          filters:  # using regex filters requires the entire branch to match
+            branches:
+              only:  # only branches matching the below regex filters will run
+                - develop
