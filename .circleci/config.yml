@@ -60,3 +60,9 @@ jobs:
       - run:
           name: deploy to firebase (hosting)
           command: node_modules/.bin/firebase deploy --only hosting --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
+
+workflows:
+  version: 2
+  projectile-continuous-integration:
+    jobs:
+      - staging-deploy
