@@ -21,35 +21,16 @@ jobs:
           paths:
             - node_modules
 
-      - restore_cache:
-          key: v1-firebase-storage{{ checksum "storage.rules" }}
+      # ここら辺cacheを見て変更がなければdeployをすっとばしたい
       - run:
           name: deploy to firebase (storage)
           command: node_modules/.bin/firebase deploy --only storage --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
-      - save_cache:
-          key: v1-firebase-storage{{ checksum "storage.rules" }}
-          paths:
-            - .
-
-      - restore_cache:
-          key: v1-firebase-firestore{{ checksum "firestore.rules" }}
       - run:
           name: deploy to firebase (firestore)
           command: node_modules/.bin/firebase deploy --only firestore --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
-      - save_cache:
-          key: v1-firebase-firestore{{ checksum "firestore.rules" }}
-          paths:
-            - .
-
-      - restore_cache:
-          key: v1-firebase-functions{{ checksum "functions/index.js" }}
       - run:
           name: deploy to firebase (functions)
           command: node_modules/.bin/firebase deploy --only functions --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
-      - save_cache:
-          key: v1-firebase-functions{{ checksum "functions/index.js" }}
-          paths:
-            - .
 
       - run:
           name: build vue app
@@ -57,6 +38,40 @@ jobs:
       - run:
           name: deploy to firebase (hosting)
           command: node_modules/.bin/firebase deploy --only hosting --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
+
+  production-deploy:
+    docker:
+      - image: circleci/node:10.3.0
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Install node packages
+          command: npm install
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      # ここら辺cacheを見て変更がなければdeployをすっとばしたい
+      - run:
+          name: deploy to firebase (storage)
+          command: node_modules/.bin/firebase deploy --only storage --project "$FIREBASE_APP_NAME_PRODUCTION" --token "$FIREBASE_TOKEN"
+      - run:
+          name: deploy to firebase (firestore)
+          command: node_modules/.bin/firebase deploy --only firestore --project "$FIREBASE_APP_NAME_PRODUCTION" --token "$FIREBASE_TOKEN"
+      - run:
+          name: deploy to firebase (functions)
+          command: node_modules/.bin/firebase deploy --only functions --project "$FIREBASE_APP_NAME_PRODUCTION" --token "$FIREBASE_TOKEN"
+
+      - run:
+          name: build vue app
+          command: npm run build
+      - run:
+          name: deploy to firebase (hosting)
+          command: node_modules/.bin/firebase deploy --only hosting --project "$FIREBASE_APP_NAME_PRODUCTION" --token "$FIREBASE_TOKEN"
 
 workflows:
   version: 2
@@ -67,3 +82,8 @@ workflows:
             branches:
               only:  # only branches matching the below regex filters will run
                 - develop
+      - production-deploy:
+          filters:  # using regex filters requires the entire branch to match
+            branches:
+              only:  # only branches matching the below regex filters will run
+                - master
