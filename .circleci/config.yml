@@ -3,43 +3,60 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2
+
 jobs:
-  build:
+  staging-deploy:
+    branches:
+      only:
+        - develop
     docker:
-      # specify the version you desire here
       - image: circleci/node:10.3.0
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
     working_directory: ~/repo
-
     steps:
       - checkout
-
-
       - restore_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
-      
       - run:
           name: Install node packages
           command: npm install
-      
-      # - run:
-      #     name: Install firebase-tools
-      #     command: sudo npm install -g firebase-tools
-
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
 
+      - restore_cache:
+          key: v1-firebase-storage{{ checksum "storage.rules" }}
+      - run:
+          name: deploy to firebase (storage)
+          command: node_modules/.bin/firebase deploy --only storage --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
+      - save_cache:
+          key: v1-firebase-storage{{ checksum "storage.rules" }}
+          paths:
+            - storage.rules
+
+      - restore_cache:
+          key: v1-firebase-firestore{{ checksum "firestore.rules" }}
+      - run:
+          name: deploy to firebase (firestore)
+          command: node_modules/.bin/firebase deploy --only firestore --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
+      - save_cache:
+          key: v1-firebase-firestore{{ checksum "firestore.rules" }}
+          paths:
+            - firestore.rules
+
+      - restore_cache:
+          key: v1-firebase-functions{{ checksum "functions/index.js" }}
+      - run:
+          name: deploy to firebase (functions)
+          command: node_modules/.bin/firebase deploy --only functions --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
+      - save_cache:
+          key: v1-firebase-functions{{ checksum "functions/index.js" }}
+          paths:
+            - functions/index.js
+
       - run:
           name: build vue app
           command: npm run build
-
       - run:
-          name: deploy to firebase 
-          command: node_modules/.bin/firebase deploy --project projectile-staging --token "$FIREBASE_TOKEN"
+          name: deploy to firebase (hosting)
+          command: node_modules/.bin/firebase deploy --only hosting --project "$FIREBASE_APP_NAME_STAGING" --token "$FIREBASE_TOKEN"
