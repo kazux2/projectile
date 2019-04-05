@@ -3,14 +3,35 @@ import firebase from '@firebase/app';
 import store from './store';
 let emptyProject = require("./assets/emptyProject.json");
 
-const config = {
-    apiKey: "AIzaSyDS65F-RdU2wGpcg6UG5pgtrSKAQMqRdm4",
-    authDomain: "projectile-d97c1.firebaseapp.com",
-    databaseURL: "https://projectile-d97c1.firebaseio.com",
-    projectId: "projectile-d97c1",
-    storageBucket: "projectile-d97c1.appspot.com",
-    messagingSenderId: "441182469013"
-  };
+var config = null;
+if(window.location.href.match('projectile-d97c1')){
+    config = {
+        apiKey: "AIzaSyDS65F-RdU2wGpcg6UG5pgtrSKAQMqRdm4",
+        authDomain: "projectile-d97c1.firebaseapp.com",
+        databaseURL: "https://projectile-d97c1.firebaseio.com",
+        projectId: "projectile-d97c1",
+        storageBucket: "projectile-d97c1.appspot.com",
+        messagingSenderId: "441182469013"
+      }
+} else if (window.location.href.match('projectile-staging')) {
+    config = {
+        apiKey: "AIzaSyCfnoxceQSRtZnnU6VNMOVNQT8owjwmRok",
+        authDomain: "projectile-staging.firebaseapp.com",
+        databaseURL: "https://projectile-staging.firebaseio.com",
+        projectId: "projectile-staging",
+        storageBucket: "projectile-staging.appspot.com",
+        messagingSenderId: "805774274387"
+      }
+} else if (window.location.href.match('localhost')) {
+    config = {
+        apiKey: "AIzaSyCfnoxceQSRtZnnU6VNMOVNQT8owjwmRok",
+        authDomain: "projectile-staging.firebaseapp.com",
+        databaseURL: "https://projectile-staging.firebaseio.com",
+        projectId: "projectile-staging",
+        storageBucket: "projectile-staging.appspot.com",
+        messagingSenderId: "805774274387"
+      }
+}
 firebase.initializeApp(config);
 
 export default {
