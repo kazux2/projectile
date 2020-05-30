@@ -1,6 +1,7 @@
 <template>
   <div>
     <projects v-bind:projectsTable="projectsTable"></projects>
+    <div v-if="(Object.keys(projectsTable).length === 0)"><p>loading...</p></div>
   </div>
 </template>
 
